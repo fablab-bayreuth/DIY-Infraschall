@@ -1,0 +1,138 @@
+.c {
+	text-align: center;
+}
+
+div, input, select {
+	padding: 5px;
+	font-size: 1em;
+}
+
+input, select {
+	width: 95%;
+}
+
+body {
+	text-align: center;
+	font-family: verdana;
+}
+
+button {
+	border: 0;
+	border-radius: 0.3rem;
+	background-color: #1fa3ec;
+	color: #fff;
+	line-height: 2.4rem;
+	font-size: 1.2rem;
+	width: 100%;
+}
+
+#container {
+	max-width: 1200px;
+	height: 400px;
+	margin: 0 auto
+}
+
+
+.q {
+	float: right;
+	width: 64px;
+	text-align: right;
+}
+
+.l {
+	background:
+		url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAALVBMVEX///8EBwfBwsLw8PAzNjaCg4NTVVUjJiZDRUUUFxdiZGSho6OSk5Pg4eFydHTCjaf3AAAAZElEQVQ4je2NSw7AIAhEBamKn97/uMXEGBvozkWb9C2Zx4xzWykBhFAeYp9gkLyZE0zIMno9n4g19hmdY39scwqVkOXaxph0ZCXQcqxSpgQpONa59wkRDOL93eAXvimwlbPbwwVAegLS1HGfZAAAAABJRU5ErkJggg==")
+		no-repeat left center;
+	background-size: 1em;
+}
+
+table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+td, th {
+	border: 1px solid #ddd;
+	padding: 8px;
+}
+
+tr:nth-child(even) {
+	background-color: #f2f2f2;
+}
+
+tr:hover {
+	background-color: #ddd;
+}
+
+th {
+	padding-top: 12px;
+	padding-bottom: 12px;
+	text-align: left;
+	background-color: #4CAF50;
+	color: white;
+}
+
+/* Tabs mit radio-Buttons */
+.tabbed figure { 
+   display: block; 
+   margin-left: 0; 
+   border-bottom: 1px solid silver;
+   clear: both;
+}
+
+.tabbed > input,
+.tabbed figure > div { display: none; }
+
+.tabbed figure>div {
+  padding: 20px;
+  width: 100%;
+  border: 1px solid silver;
+  background: #fff;
+  line-height: 1.5em;
+  letter-spacing: 0.3px;
+  color: #444;
+}
+
+#tab1:checked ~ figure .tab1,
+#tab2:checked ~ figure .tab2,
+#tab3:checked ~ figure .tab3,
+#tab4:checked ~ figure .tab4 { display: block; }
+
+nav label {
+   float: left;
+   padding: 15px 15px;
+   border-top: 1px solid silver;
+   border-right: 1px solid silver;
+   background: hsl(210,50%,50%);
+   color: #eee;
+}
+
+nav label:nth-child(1) { border-left: 1px solid silver; }
+nav label:hover { background: hsl(210,50%,40%); }
+nav label:active { background: #ffffff; }
+
+#tab1:checked ~ nav label[for="tab1"],
+#tab2:checked ~ nav label[for="tab2"],
+#tab3:checked ~ nav label[for="tab3"],
+#tab4:checked ~ nav label[for="tab4"] {
+  background: white;
+  color: #111;
+  position: relative;
+  border-bottom: none;
+}
+
+#tab1:checked ~ nav label[for="tab1"]:after,
+#tab2:checked ~ nav label[for="tab2"]:after,
+#tab3:checked ~ nav label[for="tab3"]:after,
+#tab4:checked ~ nav label[for="tab4"]:after {
+  content: "";
+  display: block;
+  position: absolute;
+  height: 2px;
+  width: 100%;
+  background: white;
+  left: 0;
+  bottom: -1px;
+}
+
+

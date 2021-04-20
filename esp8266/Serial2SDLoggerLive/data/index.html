@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DIY Infraschall Messgerät</title>
+<link href='main.css' rel='stylesheet' type='text/css'>
+<meta name="theme-color" content="#00878f">
+	<meta charset="utf-8">
+	<meta
+	content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'
+	name='viewport'>
+<script src="jquery.min.js" type="text/javascript"></script>
+<link rel="shortcut icon" href="favicon.png" type="image/png"/>
+<script src="highcharts.js"></script>
+<script src="moment.min.js"></script>
+<script src="timezone.min.js"></script>
+<script src="chart.js" type="text/javascript"></script>
+<script src="WebSocket.js" type="text/javascript"></script>
+</head>
+<body>
+	<div style='text-align: left; display: inline-block; min-width: 260px;width:100%;max-width:600px;' class="tabbed">
+<div id="bat_div" style="float:right"><span id="bat">0.00V</span> <img id="bat_img" src="bat0.gif"></div>
+	<h1>DIY Infraschall Messgerät</h1>
+   <input checked="checked" id="tab1" type="radio" name="tabs" />
+   <input id="tab2" type="radio" name="tabs" />   
+   <input id="tab3" type="radio" name="tabs" />   
+   <input id="tab4" type="radio" name="tabs" />
+
+   <nav>
+      <label for="tab1">Logger</label>      
+      <label for="tab2">Live</label>
+      <label for="tab3">Config</label>
+      <label for="tab4">About</label>
+   </nav>
+	
+<figure>
+<div class="tab1">
+<table>
+<tr><td id="computer_time"></td><td id="esp_time"></td></tr>
+<tr><td colspan="2"><input id="clock" class="clock" type="button" value="Sync Clock" onClick="setTime()"></td></tr> 
+<tr><td>Logging Filename (8.3)</td><td><input class="logging" id="filename" value="log.csv"></td></tr>
+<tr><td>Runtime (sec)</td><td><input class="logging" id="runtime"></td></tr>
+<tr><td colspan="2"><input id="logging" class="logging" type="button" value="LOGGING" onClick="setLogging()"></td></tr>
+<tr><td colspan="2" id="status">Logging is stopped</td></tr> 
+</table>
+<h3>Files</h3>
+<table>
+<tr><th>Name</th><th>Download</th><th>&nbsp;</th></tr>
+<tbody id="file_list"><tr><td colspan=3>Pending ...</td></tr></tbody>
+</table>
+</div>
+
+<div class="tab2">
+		<div id="container"></div>
+		<table>
+		<tr><td><span style="font-size:2em;font-weight:bold;" id="db_level">?? dB</span></td></tr>
+		<tr><td><input id="live" class="live" type="button" value="Start live mode"></td></tr>
+</table>			
+			<script>
+ 
+var live=$("#live")
+live.click(function(){
+	setLive()
+});
+ 
+</script>
+</div>
+
+<div class="tab3">	
+
+ 		<table>
+			<tr>
+				<td>SSID:</td>
+				<td><input class="config" id="ssid"></td>
+			</tr>
+			<tr>
+				<td>Password:</td>
+				<td><input class="config" id="password" type="password"></td>
+			</tr>
+			<tr>
+				<td>Baud:</td>
+				<td><input class="config" id="baud"></td>
+			</tr>
+			<tr>
+				<td>Max Logging Time (sec):</td>
+				<td><input class="config" id="max_runtime"></td>
+			</tr>
+			<tr>
+				<td>Battery Factor (V/ADC)</td>
+				<td><input class="config" id="bat_factor"></td>
+			</tr>
+			<tr>
+				<td>Battery Full (V):</td>
+				<td><input class="config" id="bat_full"></td>
+			</tr>
+			<tr>
+				<td>Battery Empty (V):</td>
+				<td><input class="config" id="bat_empty"></td>
+			</tr>
+			<tr>
+				<td>Sampling Frequeny/Resolution:</td>
+				<td><select class="config" id="resolution">
+				<option value="2">12bit</option>
+				<option value="3">13bit</option>
+				<option value="4">14bit</option>
+				<option value="5">15bit</option>
+				</select>
+				</td>
+			</tr>
+			<tr>
+				<td>Atmega-Board-Type:</td>
+				<td><select class="config" id="atmega">
+				<option value="0">RTC Board</option>
+				<option value="1">Arduino Mini Pro</option>
+				</select>
+				</td>
+			</tr>
+			<tr>
+				<td>Live Data Interval (s):</td>
+				<td><input class="config" id="live_interval"></td>
+			</tr>
+			<tr>
+				<td colspan=2><input class="config" type="button"
+					value="Save" onClick="saveConf()"></td>
+			</tr>
+		</table>
+</div>
+<div class="tab4">
+<p>
+Simple ESP-application for logging infrasonic data to SD-Card files<br>
+<br/>
+Frontend Version 1.0.2<br/>
+Backend Version <span id="version">X.Y.Z</span><br/>
+<br/>
+(c) Stefan Holzheu, University of Bayreuth, Fablab Bayreuth
+</p>
+</div>
+</figure>
+<table>
+			<tr id="error_tr" style="background-color:#ff0000; font-weight: bold; color: #fff;">
+				<td>Error:</td>
+				<td id="error">
+			</tr>
+			<tr id="msg_tr" style="background-color:#00dd00; font-weight: bold; color: #fff;">
+				<td>Message:</td>
+				<td id="msg">
+			</tr>
+</table>
+</div>
+
+<script>
+$(function(){
+	$(".config").prop('disabled', true); //disable config on load
+	$("#error_tr").hide();
+	$("#msg_tr").hide();
+	runner();
+	chart = Highcharts.chart('container', {
+		chart : {
+			type : 'spline',
+			animation: false
+		},
+		title : {
+			text : 'Data'
+		},
+		xAxis : {
+			type : 'datetime'
+		},
+		yAxis : {
+			minPadding : 0.2,
+			maxPadding : 0.2,
+			title : {
+				text : 'Differenzdruck [Pa]'
+			}
+		},
+		series : [{
+	        name: 'Druck',
+	        data: []
+	    }]
+	})
+
+})
+</script>
+</body>
+</html>
