@@ -217,6 +217,10 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload,
         case 5:
             cfg.live_freq=(cfg.atmega?SAMPLING2_F15:SAMPLING_F15);
             break;
+        case 6:
+            cfg.live_freq=SAMPLING_BME;
+            break;
+
         }
         cfg.live_interval=doc["live_interval"];
         saveConfig(); //save to EEPROM - defined in config.h

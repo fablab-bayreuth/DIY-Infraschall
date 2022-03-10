@@ -1,8 +1,8 @@
 /*
    This Sketch reads serial data an stores it on SD card
 
-   default SSID: serial2SD
-   default Password: bayeos24
+   default SSID: DIY-Infraschall
+   default Password: fablab24
 
    Webfrontend on http://192.168.4.1
 
@@ -31,7 +31,7 @@
 
 
 */
-#define SW_VERSION "1.0.2"
+#define SW_VERSION "1.0.3"
 
 #define LED_GREEN D1
 #define LED_RED D2

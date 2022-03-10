@@ -1,5 +1,6 @@
 #include <EEPROM.h>
 #include <WString.h>
+#define SAMPLING_BME 8.0
 
 #define SAMPLING_F15 25.92405
 #define SAMPLING_F14 51.8481
@@ -90,6 +91,9 @@ void sendConfig();
 
 char getResolution(void){
   switch((int) cfg.live_freq){
+  case (int) SAMPLING_BME:
+      return '6';
+      break;
   case (int) SAMPLING_F15:
       return '5';
       break;
